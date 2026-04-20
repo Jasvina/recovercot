@@ -10,16 +10,24 @@ The repository is intentionally small: paper source, bibliography, and minimal b
 
 - `paper/main.tex` — ACL/EMNLP-style draft.
 - `paper/references.bib` — bibliography for the current related work.
+- `docs_experiment_plan.md` — concrete MVP experiment plan.
 - `paper/README.md` — local build notes.
 
-## Suggested GitHub Repository Name
+## Repository Status
 
-`recovercot-paper`
+- Remote: `git@github.com:Jasvina/recovercot.git`
+- Branch: `main`
+- Scope: paper-first repository only; no legacy project files carried over
 
-After creating an empty GitHub repository with that name, push with:
+## Current Draft Stage
+
+- The core paper framing, method, metrics, and experiment protocol are written.
+- Numerical results are intentionally not fabricated and still need real experiments.
+- The repository is ready for iterative paper writing plus future experiment scripts/data manifests.
+
+## Push / Pull
 
 ```bash
-git remote add origin git@github.com:<YOUR_GITHUB_USERNAME>/recovercot-paper.git
-git branch -M main
+git pull --ff-only origin main
 git push -u origin main
 ```
