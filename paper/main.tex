@@ -1,0 +1,147 @@
+\documentclass[11pt]{article}
+\usepackage[review]{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{inconsolata}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{url}
+
+\title{RecoverCoT: Counterfactual Recoverability Distillation for Robust Web Agents}
+
+\author{Anonymous EMNLP Submission}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Long-horizon web agents frequently fail because intermediate mistakes compound into states from which greedy action generation cannot recover. Existing methods improve next-action prediction, process reward estimation, reflection, branching, or rollback, but they rarely model a more basic question: whether the current state is still recoverable, and if so, how recovery should proceed. We introduce \textit{recoverability} as a structured process-level supervision signal for web agents. Recoverability captures whether an agent can still complete the task from its current trajectory state, whether it should continue, branch, or roll back, and which previous checkpoint should be restored when rollback is needed. We instantiate this idea with \textsc{RecoverCoT}, a counterfactual recoverability distillation framework that labels intermediate states by comparing candidate recovery paths through short rollouts or teacher evaluation. The resulting supervision trains a recoverability-aware controller that governs inference-time recovery decisions before the base agent emits the next web action. We propose recovery-specific evaluation metrics, including first-error recovery rate, rollback precision, and unnecessary rollback rate. A planned evaluation on WebVoyager, Mind2Web-Live, and WebArena-Lite tests whether explicit recoverability modeling improves task success, reduces wasted exploration, and improves robustness under noisy or underspecified instructions.
+\end{abstract}
+
+\section{Introduction}
+Large language model (LLM) agents are increasingly deployed for long-horizon interactive tasks such as web navigation, form filling, tool use, and information seeking. Unlike single-turn language generation, these tasks require an agent to maintain a dynamic state, interpret delayed feedback, and recover from local mistakes. A single wrong click or premature search refinement can move the agent into a misleading branch of the web environment. If the agent continues greedily from that state, the error may compound across many subsequent actions.
+
+Recent work has therefore moved beyond simple next-action prediction. Web agents have been augmented with reflection, branching, and rollback-style reasoning \citep{hu-etal-2025-webcot}; explicit rollback mechanisms \citep{zhang-etal-2026-webrollback}; reinforcement learning for web interaction \citep{wei-etal-2025-webagentr1}; and process reward models that score intermediate trajectories \citep{choudhury2025agentprm,zhang2026webarbiter}. These directions share an important premise: final task success is too sparse to supervise long-horizon behavior, so agents need process-level feedback.
+
+However, existing process supervision often leaves a key distinction implicit. Not every error should be handled in the same way. Some states are still locally repairable and the agent should continue with a corrective action. Some require branching to test an alternative interpretation. Some are recoverable only if the agent rolls back to a prior checkpoint. Others are effectively irrecoverable under the remaining step budget. A scalar reward or a generic rollback operator does not directly answer these questions.
+
+We argue that web agents need explicit \textit{recoverability} modeling: before choosing the next action, the agent should estimate whether the current state is still recoverable, which recovery mode is appropriate, and where rollback should occur. This perspective reframes recovery as a structured decision problem rather than a side effect of reward scoring or ad hoc reflection.
+
+We propose \textsc{RecoverCoT}, a framework for \textit{Counterfactual Recoverability Distillation}. Given a task, trajectory history, and current observation, \textsc{RecoverCoT} constructs candidate recovery paths such as continuing, branching, rolling back to recent checkpoints, or restarting. Candidate outcomes are estimated with bounded rollouts or a teacher evaluator. These counterfactual comparisons yield structured labels: recoverability level, recovery decision, rollback target, and a concise rationale. A controller is then trained to predict these labels and guide inference-time web-agent execution.
+
+Our intended contribution is threefold. First, we formalize recoverability as a process-level supervision signal for long-horizon web agents. Second, we propose counterfactual recoverability distillation, an automatic data construction procedure that produces structured continue/branch/rollback supervision from intermediate states. Third, we introduce recovery-specific metrics that diagnose when agents recover after first errors, when rollbacks are justified, and when agents overuse rollback despite locally repairable states.
+
+\section{Related Work}
+\paragraph{LLM web agents.}
+LLM-based web agents combine natural-language reasoning with interactive browser actions, extending the reasoning-and-acting paradigm of ReAct-style agents \citep{yao2023react}. Benchmarks and systems such as WebVoyager, Mind2Web, and WebArena evaluate whether agents can complete realistic web tasks from observations and action histories \citep{he-etal-2024-webvoyager,deng2023mind2web,zhou2023webarena}. As tasks become longer and environments more dynamic, simple greedy action generation often fails because local errors shift the agent into a wrong branch of the environment.
+
+\paragraph{Reflection, branching, and rollback.}
+WebCoT reconstructs chain-of-thought traces for web-agent reflection, branching, and rollback, showing that targeted reasoning skills can improve web navigation \citep{hu-etal-2025-webcot}. WebRollback introduces an explicit rollback mechanism to counter the brittleness of one-way greedy search \citep{zhang-etal-2026-webrollback}. These works demonstrate that recovery operations are useful, but they do not isolate recoverability as a separate state-level prediction problem. Our work is complementary: rather than only adding rollback or teaching rollback rationales, we train the agent to decide when a state is locally repairable, when branching is preferable, and when rollback is warranted.
+
+\paragraph{Process reward models for agents.}
+Process reward models provide denser feedback than final success labels. AgentPRM uses Monte Carlo rollouts to estimate process rewards for agent training \citep{choudhury2025agentprm}. WebArbiter develops reasoning-first process reward modeling for web navigation \citep{zhang2026webarbiter}. Such models typically score actions or trajectories, whereas recoverability exposes a structured decision: continue, branch, roll back, or declare the state irrecoverable. This structure makes recovery behavior more interpretable and directly actionable.
+
+\paragraph{Robustness under imperfect guidance.}
+Recent benchmarks emphasize that agents must remain robust to imperfect instructions, noisy demonstrations, or misleading guidance \citep{diao-etal-2025-guidebench,fu-etal-2026-beyond}. Recoverability modeling provides a natural mechanism for this setting: when guidance pushes an agent toward a wrong branch, the controller can identify declining recoverability and trigger branch or rollback decisions before the failure becomes irreversible.
+
+\section{Problem Formulation}
+We consider a web task specified by an instruction $x$. At step $t$, an agent has trajectory history $h_t = (o_0, a_0, \ldots, o_t)$, where $o_t$ is the current observation and $a_i$ are prior actions. A base policy $\pi_\theta$ proposes actions from $x$ and $h_t$. Standard web-agent training optimizes next-action imitation, final task success, or a scalar process score.
+
+We define a checkpoint set $C_t = \{c_0, \ldots, c_m\}$ drawn from prior trajectory states. Checkpoints may correspond to page transitions, form submissions, search queries, or other semantically meaningful state changes. A recovery decision belongs to
+\begin{equation}
+\mathcal{D} = \{\textsc{Continue}, \textsc{Branch}, \textsc{Rollback}, \textsc{Restart}\}.
+\end{equation}
+If the decision is \textsc{Rollback}, the controller also predicts a target checkpoint $c_j \in C_t$.
+
+Recoverability is the probability that a task can still be completed from the current state under a bounded recovery budget $B$:
+\begin{equation}
+\rho(s_t) = \Pr[\mathrm{success} \mid x, h_t, B].
+\end{equation}
+In practice, we discretize $\rho$ into three labels: \textsc{Recoverable}, \textsc{WeaklyRecoverable}, and \textsc{Irrecoverable}. The label is paired with the best recovery decision and an optional rollback target.
+
+\section{Counterfactual Recoverability Distillation}
+\subsection{State Sampling}
+We sample intermediate states from both successful and failed trajectories. Uniform sampling wastes budget on easy states, so we prioritize states likely to reveal recovery behavior: the first divergence from a successful trajectory, repeated failed attempts, branch changes, form submissions, backtracking events, and late-stage states near success or failure.
+
+\subsection{Candidate Recovery Construction}
+For each sampled state $s_t=(x,h_t,o_t)$, we construct a candidate set $\mathcal{K}_t$:
+\begin{align}
+\mathcal{K}_t = \{&k_{\mathrm{cont}}, k_{\mathrm{branch}}, k_{\mathrm{rb1}}, \\
+&k_{\mathrm{rbk}}, k_{\mathrm{restart}}\}.
+\end{align}
+The continue candidate follows the current base policy. The branch candidate asks the agent or teacher to generate an alternative plausible action. The rollback candidates restore recent or earlier checkpoints. The restart candidate estimates whether abandoning the current trajectory is preferable under budget.
+
+\subsection{Counterfactual Labeling}
+Each candidate $k \in \mathcal{K}_t$ is evaluated by bounded rollout, teacher judgment, or both. Let $y_k \in \{0,1\}$ denote task success, $\Delta_k$ the number of additional steps, and $q_k$ an optional quality penalty for unsafe, redundant, or invalid actions. We score candidates as
+\begin{equation}
+S(s_t,k) = y_k - \lambda \Delta_k - \mu q_k.
+\end{equation}
+The best candidate $k^*=\arg\max_k S(s_t,k)$ determines the recovery decision. The recoverability class is assigned from the candidate success distribution: states with at least one high-scoring successful continuation are recoverable, states with only costly or fragile successful candidates are weakly recoverable, and states with no successful candidate under budget are irrecoverable.
+
+The final supervision instance is
+\begin{equation}
+(x,h_t,o_t) \mapsto (r_t,d_t,c_t,z_t),
+\end{equation}
+where $r_t$ is the recoverability class, $d_t$ the recovery decision, $c_t$ the rollback target when applicable, and $z_t$ a concise rationale.
+
+\subsection{Training Objective}
+We train a controller $g_\phi$ to output a structured recovery record. A simple implementation uses instruction tuning over JSON-formatted targets:
+\begin{verbatim}
+{
+  "recoverability": "weakly_recoverable",
+  "decision": "rollback",
+  "rollback_target": 4,
+  "reason": "The current filters depend on an earlier wrong category choice."
+}
+\end{verbatim}
+The loss is a weighted sum of recoverability classification, decision prediction, rollback target prediction, and rationale generation:
+\begin{equation}
+\mathcal{L}=\mathcal{L}_{r}+\alpha\mathcal{L}_{d}+\beta\mathcal{L}_{c}+\gamma\mathcal{L}_{z}.
+\end{equation}
+When multiple candidates are available, a preference loss can additionally rank successful low-cost recovery decisions above failed or costly alternatives.
+
+\section{Recoverability-Aware Inference}
+At inference time, the controller is called before the base agent emits the next action. If the state is recoverable and the decision is \textsc{Continue}, the base policy proceeds normally. If the decision is \textsc{Branch}, the system requests an alternative action or short lookahead. If the decision is \textsc{Rollback}, the browser state is restored to the predicted checkpoint and the base policy resumes from there. If the state is irrecoverable, the agent restarts or terminates depending on task budget.
+
+This design separates recovery control from action generation. The base agent remains responsible for low-level web actions, while the controller decides whether the current trajectory is worth continuing.
+
+\section{Experiments}
+\subsection{Benchmarks}
+We plan to evaluate on WebVoyager, Mind2Web-Live, and WebArena-Lite \citep{he-etal-2024-webvoyager,deng2023mind2web,zhou2023webarena}. These benchmarks provide long-horizon web tasks with realistic interaction histories, making them suitable for studying recovery after intermediate errors.
+
+\subsection{Baselines}
+We compare against four baseline families: a greedy web agent without explicit recovery, a WebCoT-style reasoning baseline with reflection and rollback rationales, a WebRollback-style explicit rollback baseline, and a scalar process reward or reranking baseline. This comparison separates recoverability-aware control from general reasoning, rollback availability, and scalar reward modeling.
+
+\subsection{Metrics}
+Besides task success rate, average steps, and token cost, we report recovery-specific metrics.
+\paragraph{First-Error Recovery Rate.}
+The fraction of trajectories that eventually succeed after the first detected divergence from a successful or teacher-preferred trajectory.
+\paragraph{Rollback Precision.}
+Among all triggered rollbacks, the fraction for which rollback yields a better counterfactual outcome than continuing.
+\paragraph{Unnecessary Rollback Rate.}
+The fraction of rollbacks triggered in states that were locally repairable by continuing or branching.
+\paragraph{Rollback Target Accuracy.}
+The fraction of rollback decisions whose predicted checkpoint matches the best counterfactual checkpoint.
+
+\subsection{Ablations}
+We ablate binary recoverability versus structured recoverability, decision prediction without rollback targets, training without rationales, final-outcome weak labels instead of counterfactual labels, and controller-only inference without branch generation. These ablations test whether the gains come from recoverability structure rather than from additional supervision volume alone.
+
+\section{Expected Analysis}
+We will analyze errors by category: locally repairable mistakes, wrong-branch mistakes, irreversible form submissions, instruction ambiguity, and environment instability. We will also measure calibration between predicted recoverability and empirical rollout success. Case studies will contrast over-persistence, where baselines continue in low-recoverability states, with over-rollback, where baselines abandon states that remain locally repairable.
+
+\section{Limitations}
+Recoverability labels depend on the quality of bounded rollouts or teacher evaluation. If the teacher underestimates a recovery path, the controller may learn conservative behavior. Live web benchmarks also introduce environment drift. To reduce these risks, the evaluation should include offline counterfactual diagnostics, human spot checks of labels, and small-scale live validation.
+
+\section{Conclusion}
+We proposed \textsc{RecoverCoT}, a framework for teaching web agents to reason about whether their current state is recoverable and which recovery mode should be used. By turning recovery into a structured process-level prediction problem, counterfactual recoverability distillation offers a lightweight alternative to full reinforcement learning while directly addressing a central failure mode of long-horizon agents.
+
+\bibliography{references}
+\bibliographystyle{acl_natbib}
+\end{document}
