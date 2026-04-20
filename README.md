@@ -8,9 +8,9 @@ The repository is intentionally small: paper source, bibliography, and minimal b
 
 ## Layout
 
+- `STATUS.md` — the primary progress surface to monitor current stage and next actions.
 - `paper/main.tex` — ACL/EMNLP-style draft.
 - `paper/references.bib` — bibliography for the current related work.
-- `docs_experiment_plan.md` — concrete MVP experiment plan.
 - `experiments/` — prompt/schema/example/validator scaffold for recoverability labels.
 - `paper/README.md` — local build notes.
 
@@ -39,6 +39,7 @@ git push -u origin main
 ```bash
 make validate-sample
 make sample-pipeline
+make build-sample-records
 make eval-sample
 make build-sample-sft
 make paper

@@ -13,7 +13,9 @@ This directory holds the first concrete artifacts for RecoverCoT-style recoverab
 - `examples/sample_trajectory.json` - one sample trajectory for the preprocessing pipeline.
 - `examples/sample_gold_labels.jsonl` - toy gold labels for offline metric testing.
 - `examples/sample_pred_labels.jsonl` - toy predictions for offline metric testing.
+- `examples/sample_teacher_outputs.jsonl` - toy teacher responses for sampled states.
 - `generated/sample_sampled_states.jsonl` - sampled states generated from the sample trajectory.
+- `generated/sample_recoverability_records.jsonl` - validated recoverability records built from teacher outputs.
 - `generated/sample_teacher_requests.jsonl` - rendered teacher prompts for sampled states.
 - `generated/sample_sft_records.jsonl` - SFT-style training records built from sampled states and labels.
 - `scripts/validate_recoverability_jsonl.py` - stdlib-only validator for JSONL label files.
@@ -22,6 +24,7 @@ This directory holds the first concrete artifacts for RecoverCoT-style recoverab
 - `scripts/render_teacher_requests.py` - prompt renderer from sampled states to teacher requests.
 - `scripts/evaluate_recoverability_predictions.py` - offline metric calculator for gold vs predicted labels.
 - `scripts/build_sft_training_data.py` - converter from sampled states plus labels into SFT-style JSONL.
+- `scripts/build_recoverability_records.py` - merges sampled states with teacher outputs into validated recoverability records.
 
 ## Expected Workflow
 
@@ -45,13 +48,21 @@ python3 experiments/scripts/render_teacher_requests.py \
   experiments/generated/sample_sampled_states.jsonl \
   --output experiments/generated/sample_teacher_requests.jsonl
 
+python3 experiments/scripts/build_recoverability_records.py \
+  experiments/generated/sample_sampled_states.jsonl \
+  experiments/examples/sample_teacher_outputs.jsonl \
+  --output experiments/generated/sample_recoverability_records.jsonl
+
+python3 experiments/scripts/validate_recoverability_jsonl.py \
+  experiments/generated/sample_recoverability_records.jsonl
+
 python3 experiments/scripts/evaluate_recoverability_predictions.py \
   experiments/examples/sample_gold_labels.jsonl \
   experiments/examples/sample_pred_labels.jsonl
 
 python3 experiments/scripts/build_sft_training_data.py \
   experiments/generated/sample_sampled_states.jsonl \
-  experiments/examples/sample_gold_labels.jsonl \
+  experiments/generated/sample_recoverability_records.jsonl \
   --output experiments/generated/sample_sft_records.jsonl
 ```
 
