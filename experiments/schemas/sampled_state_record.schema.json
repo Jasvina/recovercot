@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/sampled_state_record.schema.json",
+  "title": "SampledStateRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "state_id",
+    "source_step",
+    "instruction",
+    "site",
+    "current_url",
+    "current_observation",
+    "recent_history",
+    "checkpoint_candidates",
+    "trigger_tags",
+    "remaining_budget",
+    "source_success"
+  ],
+  "properties": {
+    "task_id": {"type": "string", "minLength": 1},
+    "state_id": {"type": "string", "minLength": 1},
+    "source_step": {"type": "integer", "minimum": 1},
+    "instruction": {"type": "string", "minLength": 1},
+    "site": {"type": "string", "minLength": 1},
+    "current_url": {"type": "string", "minLength": 1},
+    "current_observation": {"type": "string", "minLength": 1},
+    "recent_history": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "checkpoint_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["checkpoint_id", "step", "summary"],
+        "properties": {
+          "checkpoint_id": {"type": "string", "minLength": 1},
+          "step": {"type": "integer", "minimum": 1},
+          "summary": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "trigger_tags": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "remaining_budget": {"type": "integer", "minimum": 0},
+    "source_success": {"type": "boolean"}
+  }
+}

@@ -19,6 +19,7 @@ The repository is intentionally small: paper source, bibliography, and minimal b
 - Remote: `git@github.com:Jasvina/recovercot.git`
 - Branch: `main`
 - Scope: paper-first repository only; no legacy project files carried over
+- CI: `.github/workflows/validate.yml` runs the sample data/label pipeline on push and pull request
 
 ## Current Draft Stage
 
@@ -37,5 +38,8 @@ git push -u origin main
 
 ```bash
 make validate-sample
+make sample-pipeline
+make eval-sample
+make build-sample-sft
 make paper
 ```

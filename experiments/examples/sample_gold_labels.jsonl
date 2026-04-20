@@ -1,0 +1,5 @@
+{"state_id": "webvoyager_0001_step_3", "recoverability": "weakly_recoverable", "decision": "rollback", "rollback_target": "checkpoint_step_2"}
+{"state_id": "webvoyager_0001_step_5", "recoverability": "weakly_recoverable", "decision": "rollback", "rollback_target": "checkpoint_step_2"}
+{"state_id": "webvoyager_0001_step_6", "recoverability": "recoverable", "decision": "continue", "rollback_target": null}
+{"state_id": "webvoyager_0001_step_9", "recoverability": "recoverable", "decision": "branch", "rollback_target": null}
+{"state_id": "webvoyager_0001_step_10", "recoverability": "recoverable", "decision": "branch", "rollback_target": null}

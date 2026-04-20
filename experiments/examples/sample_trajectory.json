@@ -1,0 +1,119 @@
+{
+  "task_id": "webvoyager_0001",
+  "instruction": "Find a blue waterproof hiking jacket under $120 and add it to the cart.",
+  "site": "demo-outdoor-store",
+  "success": false,
+  "max_steps": 15,
+  "steps": [
+    {
+      "step": 1,
+      "url": "https://demo.example.com/",
+      "action_type": "goto",
+      "action": "open_homepage",
+      "target": "homepage",
+      "value": null,
+      "observation": "Homepage with top navigation including Men, Women, Outerwear, and Search.",
+      "tags": ["start", "page_transition"],
+      "checkpoint": true
+    },
+    {
+      "step": 2,
+      "url": "https://demo.example.com/men",
+      "action_type": "click",
+      "action": "click_nav",
+      "target": "Men",
+      "value": null,
+      "observation": "Men category page with lifestyle apparel and outdoor gear.",
+      "tags": ["page_transition"],
+      "checkpoint": true
+    },
+    {
+      "step": 3,
+      "url": "https://demo.example.com/men/jackets",
+      "action_type": "click",
+      "action": "click_category",
+      "target": "Casual Jackets",
+      "value": null,
+      "observation": "Casual jacket grid appears. No hiking-specific filters are visible.",
+      "tags": ["wrong_branch", "page_transition"],
+      "checkpoint": true
+    },
+    {
+      "step": 4,
+      "url": "https://demo.example.com/men/jackets",
+      "action_type": "type",
+      "action": "set_filter",
+      "target": "color_filter",
+      "value": "blue",
+      "observation": "Blue casual jackets are shown, but the branch is still casual jackets.",
+      "tags": ["branch_refinement"],
+      "checkpoint": false
+    },
+    {
+      "step": 5,
+      "url": "https://demo.example.com/men/jackets",
+      "action_type": "click",
+      "action": "click_item",
+      "target": "Urban Rain Shell",
+      "value": null,
+      "observation": "Selected product is water resistant but not a hiking jacket and costs $149.",
+      "tags": ["error_signal", "wrong_item"],
+      "checkpoint": false
+    },
+    {
+      "step": 6,
+      "url": "https://demo.example.com/search?q=blue+hiking+jacket",
+      "action_type": "submit",
+      "action": "search",
+      "target": "site_search",
+      "value": "blue hiking jacket",
+      "observation": "Search results include several hiking jackets and rain shells.",
+      "tags": ["search_submit", "page_transition"],
+      "checkpoint": true
+    },
+    {
+      "step": 7,
+      "url": "https://demo.example.com/search?q=blue+hiking+jacket",
+      "action_type": "click",
+      "action": "click_filter",
+      "target": "waterproof_filter",
+      "value": null,
+      "observation": "Results now show waterproof hiking jackets, several under $120.",
+      "tags": ["productive_progress"],
+      "checkpoint": false
+    },
+    {
+      "step": 8,
+      "url": "https://demo.example.com/product/trailguard-lite",
+      "action_type": "click",
+      "action": "click_item",
+      "target": "TrailGuard Lite",
+      "value": null,
+      "observation": "Correct product page, price $109, waterproof and hiking-specific.",
+      "tags": ["page_transition", "good_branch"],
+      "checkpoint": true
+    },
+    {
+      "step": 9,
+      "url": "https://demo.example.com/cart",
+      "action_type": "click",
+      "action": "click_add_to_cart",
+      "target": "add_to_cart_button",
+      "value": null,
+      "observation": "Cart update failed because size was not selected.",
+      "tags": ["error_signal", "repeated_failure"],
+      "checkpoint": false
+    },
+    {
+      "step": 10,
+      "url": "https://demo.example.com/product/trailguard-lite",
+      "action_type": "click",
+      "action": "click_add_to_cart",
+      "target": "add_to_cart_button",
+      "value": null,
+      "observation": "Cart update failed again because the size field is still empty.",
+      "tags": ["error_signal", "repeated_failure"],
+      "checkpoint": false
+    }
+  ]
+}
