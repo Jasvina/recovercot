@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/recoverability_record.schema.json",
+  "title": "RecoverabilityRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "state_id",
+    "instruction",
+    "history",
+    "checkpoint_ids",
+    "recoverability",
+    "decision",
+    "rollback_target",
+    "teacher_rationale",
+    "candidate_scores"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "state_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "instruction": {
+      "type": "string",
+      "minLength": 1
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "checkpoint_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recoverability": {
+      "type": "string",
+      "enum": [
+        "recoverable",
+        "weakly_recoverable",
+        "irrecoverable"
+      ]
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "continue",
+        "branch",
+        "rollback",
+        "restart"
+      ]
+    },
+    "rollback_target": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "teacher_rationale": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_scores": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "number"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "const": "rollback"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "rollback_target": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "rollback_target": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}

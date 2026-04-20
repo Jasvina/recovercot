@@ -11,6 +11,7 @@ The repository is intentionally small: paper source, bibliography, and minimal b
 - `paper/main.tex` — ACL/EMNLP-style draft.
 - `paper/references.bib` — bibliography for the current related work.
 - `docs_experiment_plan.md` — concrete MVP experiment plan.
+- `experiments/` — prompt/schema/example/validator scaffold for recoverability labels.
 - `paper/README.md` — local build notes.
 
 ## Repository Status
@@ -30,4 +31,11 @@ The repository is intentionally small: paper source, bibliography, and minimal b
 ```bash
 git pull --ff-only origin main
 git push -u origin main
+```
+
+## Useful Local Commands
+
+```bash
+make validate-sample
+make paper
 ```

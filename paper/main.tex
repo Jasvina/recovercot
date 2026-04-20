@@ -202,6 +202,76 @@ The current draft also intentionally avoids fabricating empirical claims. The me
 \section{Conclusion}
 We proposed \textsc{RecoverCoT}, a framework for teaching web agents to reason about whether their current state is recoverable and which recovery mode should be used. By turning recovery into a structured process-level prediction problem, counterfactual recoverability distillation offers a lightweight alternative to full reinforcement learning while directly addressing a central failure mode of long-horizon agents.
 
+\appendix
+
+\section{Recoverability Record Schema}
+Table~\ref{tab:label-schema} summarizes the fields used by the proposed recoverability labeling pipeline. The same schema is mirrored in the repository so the paper draft and experiment implementation stay aligned.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+Field & Type & Description \\
+\midrule
+task\_id & string & Unique identifier for the task instance. \\
+state\_id & string & Unique identifier for the sampled intermediate state. \\
+instruction & string & Natural-language task instruction. \\
+history & array & Prior observations/actions up to the current state. \\
+checkpoint\_ids & array & Candidate rollback checkpoints available at this state. \\
+recoverability & string & One of recoverable, weakly\_recoverable, irrecoverable. \\
+decision & string & One of continue, branch, rollback, restart. \\
+rollback\_target & string/null & Selected checkpoint id when decision is rollback. \\
+candidate\_scores & object & Optional score dictionary for continue/branch/rollback candidates. \\
+teacher\_rationale & string & Short explanation supporting the selected label. \\
+\bottomrule
+\end{tabular}
+\caption{Structured fields for a recoverability supervision record.}
+\label{tab:label-schema}
+\end{table*}
+
+\section{Teacher Prompt Template}
+The teacher prompt should expose the task instruction, compressed state summary, recent trajectory history, candidate recovery options, and the remaining budget. The teacher output must be machine-readable so that labels can be validated automatically before controller training. A repository version of the prompt template is provided for direct experimentation.
+
+\section{Result Table Templates}
+Tables~\ref{tab:main-results-template} and~\ref{tab:ablation-template} are draft-time templates for the final paper. Entries are left blank intentionally until real experiments are completed.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lcccccc}
+\toprule
+Method & Success $\uparrow$ & First-Error Recovery $\uparrow$ & Rollback Precision $\uparrow$ & Unnecessary Rollback $\downarrow$ & Steps $\downarrow$ & Tokens $\downarrow$ \\
+\midrule
+Greedy agent & -- & -- & -- & -- & -- & -- \\
+WebCoT-style baseline & -- & -- & -- & -- & -- & -- \\
+WebRollback-style baseline & -- & -- & -- & -- & -- & -- \\
+Scalar PRM / reranker & -- & -- & -- & -- & -- & -- \\
+RecoverCoT & -- & -- & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\caption{Main online evaluation template.}
+\label{tab:main-results-template}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Variant & Decision Acc. $\uparrow$ & Rollback Target Acc. $\uparrow$ & Rollback Precision $\uparrow$ & Success $\uparrow$ \\
+\midrule
+Binary recoverability only & -- & -- & -- & -- \\
+No rollback target head & -- & -- & -- & -- \\
+No rationale supervision & -- & -- & -- & -- \\
+Weak labels only & -- & -- & -- & -- \\
+Full RecoverCoT & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\caption{Ablation template for offline and online recovery quality.}
+\label{tab:ablation-template}
+\end{table*}
+
 \bibliography{references}
 \bibliographystyle{acl_natbib}
 \end{document}
