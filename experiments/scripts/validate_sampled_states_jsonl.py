@@ -20,6 +20,10 @@ REQUIRED_KEYS = {
     "trigger_tags",
     "remaining_budget",
     "source_success",
+    "state_origin",
+    "parent_state_id",
+    "perturbation_type",
+    "perturbation_note",
 }
 
 
@@ -59,6 +63,17 @@ def validate_record(record: object, lineno: int) -> list[str]:
         errors.append(f"line {lineno}: remaining_budget must be a non-negative integer")
     if not isinstance(record.get("source_success"), bool):
         errors.append(f"line {lineno}: source_success must be a boolean")
+    if record.get("state_origin") not in {"observed", "synthetic_counterfactual"}:
+        errors.append(f"line {lineno}: state_origin must be 'observed' or 'synthetic_counterfactual'")
+    parent_state_id = record.get("parent_state_id")
+    if parent_state_id is not None and (not isinstance(parent_state_id, str) or not parent_state_id):
+        errors.append(f"line {lineno}: parent_state_id must be null or a non-empty string")
+    perturbation_type = record.get("perturbation_type")
+    if perturbation_type is not None and (not isinstance(perturbation_type, str) or not perturbation_type):
+        errors.append(f"line {lineno}: perturbation_type must be null or a non-empty string")
+    perturbation_note = record.get("perturbation_note")
+    if perturbation_note is not None and (not isinstance(perturbation_note, str) or not perturbation_note):
+        errors.append(f"line {lineno}: perturbation_note must be null or a non-empty string")
 
     for idx, checkpoint in enumerate(record.get("checkpoint_candidates", []), start=1):
         if not isinstance(checkpoint, dict):

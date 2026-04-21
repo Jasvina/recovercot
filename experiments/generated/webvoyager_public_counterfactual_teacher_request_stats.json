@@ -1,0 +1,9 @@
+{
+  "kind": "teacher_request",
+  "count": 167,
+  "avg_prompt_chars": 6349.2934,
+  "max_prompt_chars": 12648,
+  "avg_prompt_lines": 100.6766,
+  "avg_approx_prompt_tokens": 1587.3234,
+  "total_approx_prompt_tokens": 265083
+}

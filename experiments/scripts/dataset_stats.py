@@ -42,15 +42,22 @@ def summarize_states(rows: list[dict[str, Any]]) -> dict[str, Any]:
     tag_counter = Counter()
     budget_values = []
     checkpoints = []
+    origin_counter = Counter()
+    perturbation_counter = Counter()
     for row in rows:
         tag_counter.update(row.get("trigger_tags", []))
         budget_values.append(int(row.get("remaining_budget", 0)))
         checkpoints.append(len(row.get("checkpoint_candidates", [])))
+        origin_counter[row.get("state_origin", "observed")] += 1
+        if row.get("perturbation_type"):
+            perturbation_counter[str(row["perturbation_type"])] += 1
     return {
         "kind": "sampled_state",
         "count": len(rows),
         "avg_remaining_budget": round(sum(budget_values) / len(budget_values), 4) if budget_values else 0.0,
         "avg_checkpoint_candidates": round(sum(checkpoints) / len(checkpoints), 4) if checkpoints else 0.0,
+        "origin_breakdown": dict(origin_counter),
+        "perturbation_breakdown": dict(perturbation_counter),
         "top_trigger_tags": tag_counter.most_common(10),
     }
 

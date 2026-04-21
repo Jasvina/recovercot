@@ -1,0 +1,58 @@
+{
+  "kind": "sampled_state",
+  "count": 167,
+  "avg_remaining_budget": 1.2575,
+  "avg_checkpoint_candidates": 2.4311,
+  "origin_breakdown": {
+    "observed": 41,
+    "synthetic_counterfactual": 126
+  },
+  "perturbation_breakdown": {
+    "misleading_guidance": 11,
+    "wrong_branch": 37,
+    "repeated_failure": 37,
+    "budget_pressure": 41
+  },
+  "top_trigger_tags": [
+    [
+      "webvoyager_trace",
+      167
+    ],
+    [
+      "synthetic_counterfactual",
+      126
+    ],
+    [
+      "page_transition",
+      91
+    ],
+    [
+      "answer_step",
+      60
+    ],
+    [
+      "search_submit",
+      59
+    ],
+    [
+      "wrong_branch",
+      48
+    ],
+    [
+      "budget_pressure",
+      41
+    ],
+    [
+      "branch_change",
+      37
+    ],
+    [
+      "repeated_failure",
+      37
+    ],
+    [
+      "error_signal",
+      37
+    ]
+  ]
+}

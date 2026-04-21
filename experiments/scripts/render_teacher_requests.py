@@ -46,6 +46,10 @@ def format_prompt(template: str, state: dict[str, Any]) -> str:
         [
             f"- task_id: {state['task_id']}",
             f"- state_id: {state['state_id']}",
+            f"- state_origin: {state.get('state_origin', 'observed')}",
+            f"- parent_state_id: {state.get('parent_state_id')}",
+            f"- perturbation_type: {state.get('perturbation_type')}",
+            f"- perturbation_note: {state.get('perturbation_note')}",
             f"- site: {state['site']}",
             f"- current_url: {state['current_url']}",
             f"- current_observation: {state['current_observation']}",

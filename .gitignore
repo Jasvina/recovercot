@@ -21,3 +21,16 @@ __pycache__/
 *.pyc
 .env
 .venv/
+
+# Reproducible sample / smoke-test artifacts
+experiments/generated/sample_*
+experiments/generated/*_like_*
+experiments/generated/webvoyager_public_example_bootstrap_teacher_outputs.jsonl
+experiments/generated/webvoyager_public_example_recoverability_records.jsonl
+experiments/generated/webvoyager_public_example_recoverability_stats.json
+experiments/generated/webvoyager_public_example_sft_records.jsonl
+experiments/generated/webvoyager_public_example_sft_splits/
+training/sample_run_manifest.json
+training/generated/sample_recovercot_controller/
+training/generated/webvoyager_public_example_controller/
+training/generated/webvoyager_public_example_run_manifest.json

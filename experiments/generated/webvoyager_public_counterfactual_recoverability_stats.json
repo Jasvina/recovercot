@@ -1,0 +1,15 @@
+{
+  "kind": "label",
+  "count": 167,
+  "recoverability_breakdown": {
+    "recoverable": 22,
+    "weakly_recoverable": 130,
+    "irrecoverable": 15
+  },
+  "decision_breakdown": {
+    "continue": 45,
+    "branch": 11,
+    "rollback": 96,
+    "restart": 15
+  }
+}

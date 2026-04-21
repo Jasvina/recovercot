@@ -3,6 +3,10 @@
   "count": 41,
   "avg_remaining_budget": 1.5122,
   "avg_checkpoint_candidates": 2.4146,
+  "origin_breakdown": {
+    "observed": 41
+  },
+  "perturbation_breakdown": {},
   "top_trigger_tags": [
     [
       "webvoyager_trace",

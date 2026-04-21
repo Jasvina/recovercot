@@ -1,13 +1,31 @@
-.PHONY: paper clean validate-sample sample-pipeline build-sample-records eval-sample build-sample-sft benchmark-samples build-sample-manifest bootstrap-sample-run launch-sample-run fetch-public-refs public-webvoyager-examples public-webvoyager-bootstrap-labels public-webvoyager-bootstrap-manifest launch-public-webvoyager-bootstrap-run
+.PHONY: paper clean validate-sample validate-committed-artifacts sample-pipeline build-sample-records eval-sample build-sample-sft benchmark-samples build-sample-manifest bootstrap-sample-run launch-sample-run fetch-public-refs public-webvoyager-examples public-webvoyager-bootstrap-labels public-webvoyager-bootstrap-manifest launch-public-webvoyager-bootstrap-run public-webvoyager-counterfactual-states public-webvoyager-counterfactual-labels public-webvoyager-counterfactual-manifest launch-public-webvoyager-counterfactual-run
 
 paper:
 	cd paper && tectonic main.tex
 
 clean:
 	rm -f paper/main.pdf paper/main.aux paper/main.bbl paper/main.blg paper/main.log paper/main.out
+	rm -rf experiments/generated/sample_*
+	rm -f experiments/generated/*_like_*
+	rm -f experiments/generated/webvoyager_public_example_bootstrap_teacher_outputs.jsonl
+	rm -f experiments/generated/webvoyager_public_example_recoverability_records.jsonl
+	rm -f experiments/generated/webvoyager_public_example_recoverability_stats.json
+	rm -f experiments/generated/webvoyager_public_example_sft_records.jsonl
+	rm -rf experiments/generated/webvoyager_public_example_sft_splits
+	rm -f training/sample_run_manifest.json
+	rm -rf training/generated/sample_recovercot_controller
+	rm -rf training/generated/webvoyager_public_example_controller
+	rm -f training/generated/webvoyager_public_example_run_manifest.json
 
 validate-sample:
 	python3 experiments/scripts/validate_recoverability_jsonl.py experiments/examples/sample_recoverability_record.jsonl
+
+validate-committed-artifacts:
+	python3 experiments/scripts/validate_trajectories_jsonl.py experiments/generated/webvoyager_public_examples_normalized.jsonl
+	python3 experiments/scripts/validate_sampled_states_jsonl.py experiments/generated/webvoyager_public_examples_states.jsonl
+	python3 experiments/scripts/validate_sampled_states_jsonl.py experiments/generated/webvoyager_public_counterfactual_states.jsonl
+	python3 experiments/scripts/validate_recoverability_jsonl.py experiments/generated/webvoyager_public_counterfactual_recoverability_records.jsonl
+	python3 -c 'import json; from pathlib import Path; manifest=json.loads(Path("experiments/generated/webvoyager_public_counterfactual_sft_splits/manifest.json").read_text()); assert manifest["train"] > 0 and manifest["dev"] > 0 and manifest["test"] > 0, manifest; print(json.dumps(manifest, indent=2, ensure_ascii=True))'
 
 sample-pipeline:
 	python3 experiments/scripts/sample_recoverability_states.py experiments/examples/sample_trajectory.json --output experiments/generated/sample_sampled_states.jsonl
@@ -77,3 +95,24 @@ public-webvoyager-bootstrap-manifest:
 
 launch-public-webvoyager-bootstrap-run:
 	python3 training/scripts/launch_manifest.py training/generated/webvoyager_public_example_run_manifest.json
+
+public-webvoyager-counterfactual-states:
+	python3 experiments/scripts/augment_counterfactual_states.py experiments/generated/webvoyager_public_examples_states.jsonl --include-observed --output experiments/generated/webvoyager_public_counterfactual_states.jsonl
+	python3 experiments/scripts/validate_sampled_states_jsonl.py experiments/generated/webvoyager_public_counterfactual_states.jsonl
+	python3 experiments/scripts/dataset_stats.py experiments/generated/webvoyager_public_counterfactual_states.jsonl --output experiments/generated/webvoyager_public_counterfactual_state_stats.json
+	python3 experiments/scripts/render_teacher_requests.py experiments/generated/webvoyager_public_counterfactual_states.jsonl --output experiments/generated/webvoyager_public_counterfactual_teacher_requests.jsonl
+	python3 experiments/scripts/dataset_stats.py experiments/generated/webvoyager_public_counterfactual_teacher_requests.jsonl --output experiments/generated/webvoyager_public_counterfactual_teacher_request_stats.json
+
+public-webvoyager-counterfactual-labels:
+	python3 experiments/scripts/bootstrap_teacher_outputs.py experiments/generated/webvoyager_public_counterfactual_states.jsonl --output experiments/generated/webvoyager_public_counterfactual_bootstrap_teacher_outputs.jsonl
+	python3 experiments/scripts/build_recoverability_records.py experiments/generated/webvoyager_public_counterfactual_states.jsonl experiments/generated/webvoyager_public_counterfactual_bootstrap_teacher_outputs.jsonl --output experiments/generated/webvoyager_public_counterfactual_recoverability_records.jsonl
+	python3 experiments/scripts/validate_recoverability_jsonl.py experiments/generated/webvoyager_public_counterfactual_recoverability_records.jsonl
+	python3 experiments/scripts/dataset_stats.py experiments/generated/webvoyager_public_counterfactual_recoverability_records.jsonl --output experiments/generated/webvoyager_public_counterfactual_recoverability_stats.json
+	python3 experiments/scripts/build_sft_training_data.py experiments/generated/webvoyager_public_counterfactual_states.jsonl experiments/generated/webvoyager_public_counterfactual_recoverability_records.jsonl --output experiments/generated/webvoyager_public_counterfactual_sft_records.jsonl
+	python3 experiments/scripts/split_recoverability_dataset.py experiments/generated/webvoyager_public_counterfactual_sft_records.jsonl --out-dir experiments/generated/webvoyager_public_counterfactual_sft_splits
+
+public-webvoyager-counterfactual-manifest:
+	python3 training/scripts/prepare_training_manifest.py --train-file experiments/generated/webvoyager_public_counterfactual_sft_splits/train.jsonl --dev-file experiments/generated/webvoyager_public_counterfactual_sft_splits/dev.jsonl --test-file experiments/generated/webvoyager_public_counterfactual_sft_splits/test.jsonl --config training/configs/controller_lora_template.json --run-name webvoyager_public_counterfactual_controller --output-dir outputs/webvoyager_public_counterfactual_controller --metrics-file experiments/generated/webvoyager_public_counterfactual_recoverability_stats.json --output training/generated/webvoyager_public_counterfactual_run_manifest.json
+
+launch-public-webvoyager-counterfactual-run:
+	python3 training/scripts/launch_manifest.py training/generated/webvoyager_public_counterfactual_run_manifest.json

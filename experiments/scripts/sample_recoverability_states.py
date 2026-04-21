@@ -93,6 +93,10 @@ def build_state(trajectory: dict[str, Any], steps: list[dict[str, Any]], idx: in
         "trigger_tags": step.get("tags", []),
         "remaining_budget": max(0, int(trajectory.get("max_steps", len(steps))) - int(step["step"])),
         "source_success": bool(trajectory.get("success", False)),
+        "state_origin": "observed",
+        "parent_state_id": None,
+        "perturbation_type": None,
+        "perturbation_note": None,
     }
 
 

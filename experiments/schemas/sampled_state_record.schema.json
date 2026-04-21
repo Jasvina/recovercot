@@ -16,7 +16,11 @@
     "checkpoint_candidates",
     "trigger_tags",
     "remaining_budget",
-    "source_success"
+    "source_success",
+    "state_origin",
+    "parent_state_id",
+    "perturbation_type",
+    "perturbation_note"
   ],
   "properties": {
     "task_id": {"type": "string", "minLength": 1},
@@ -48,6 +52,22 @@
       "items": {"type": "string"}
     },
     "remaining_budget": {"type": "integer", "minimum": 0},
-    "source_success": {"type": "boolean"}
+    "source_success": {"type": "boolean"},
+    "state_origin": {
+      "type": "string",
+      "enum": ["observed", "synthetic_counterfactual"]
+    },
+    "parent_state_id": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "perturbation_type": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "perturbation_note": {
+      "type": ["string", "null"],
+      "minLength": 1
+    }
   }
 }

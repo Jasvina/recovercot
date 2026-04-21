@@ -1,8 +1,8 @@
 python -m trl.sft_trainer \
   --model_name_or_path Qwen/Qwen2.5-7B-Instruct \
-  --train_file experiments/generated/sample_sft_splits/train.jsonl \
-  --eval_file experiments/generated/sample_sft_splits/dev.jsonl \
-  --output_dir outputs/sample_recovercot_controller \
+  --train_file experiments/generated/webvoyager_public_counterfactual_sft_splits/train.jsonl \
+  --eval_file experiments/generated/webvoyager_public_counterfactual_sft_splits/dev.jsonl \
+  --output_dir outputs/webvoyager_public_counterfactual_controller \
   --per_device_train_batch_size 2 \
   --gradient_accumulation_steps 16 \
   --learning_rate 0.0002 \

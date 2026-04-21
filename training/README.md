@@ -1,50 +1,52 @@
 # Training
 
-This directory holds the first controller-training artifacts for RecoverCoT.
+This directory holds RecoverCoT controller-training scaffolding: config templates, manifest builders, run-directory bootstrapping, and launcher glue.
 
-## Current Scope
+## What this layer does
 
-- lightweight LoRA/QLoRA-oriented config templates;
-- run manifests that tie together data splits, output dirs, and evaluation files;
-- no framework lock-in yet, so the paper repo stays portable.
+The training layer is intentionally lightweight. It does not hard-code a full trainer stack into the repository; instead it turns validated datasets into reproducible manifests and runnable shell commands.
 
-## Files
+## Main files
 
-- `configs/controller_lora_template.json` - baseline training hyperparameters for a 7B/8B recoverability controller.
-- `scripts/prepare_training_manifest.py` - builds a run manifest from dataset files and output settings.
-- `scripts/bootstrap_run_dir.py` - creates a reproducible run directory with manifest snapshots and metadata.
-- `scripts/render_hf_sft_command.py` - renders a first HF/TRL-style SFT command from a run manifest.
-- `scripts/launch_manifest.py` - bootstraps a run dir, renders the shell command, and can optionally execute it.
-- `sample_run_manifest.json` - sample manifest generated from the toy pipeline.
-- `generated/sample_recovercot_controller/` - bootstrapped sample run directory.
+- `configs/controller_lora_template.json` — baseline LoRA/QLoRA-oriented config for a 7B/8B controller
+- `scripts/prepare_training_manifest.py` — convert dataset paths + config into a single run manifest
+- `scripts/bootstrap_run_dir.py` — create a reproducible run directory with manifest snapshots and metadata
+- `scripts/render_hf_sft_command.py` — render a first HF/TRL-style SFT command from a manifest
+- `scripts/launch_manifest.py` — one-shot helper that bootstraps a run dir, writes `train_command.sh`, and can optionally execute it
 
-## Intended Usage
+## Canonical committed run artifacts
 
-1. Produce validated recoverability records.
-2. Convert them to SFT-style training records.
-3. Build train/dev/test splits.
-4. Generate a run manifest.
-5. Bootstrap a run directory and render the first trainer command.
-6. Use `launch_manifest.py` for a one-shot dry run or hand the rendered command to the actual trainer launcher.
+The repository now keeps the larger public counterfactual run artifacts under version control:
 
-## One-Shot Launch
+- `generated/webvoyager_public_counterfactual_run_manifest.json`
+- `generated/webvoyager_public_counterfactual_controller/`
+
+The smaller smoke-test manifest / run directory is reproducible and therefore no longer committed by default.
+
+## Typical usage
+
+### Smoke-test launcher
 
 ```bash
-python3 training/scripts/launch_manifest.py training/sample_run_manifest.json
+make build-sample-manifest
+make bootstrap-sample-run
 ```
 
-This dry run refreshes `training/generated/<run_name>/` and writes a runnable `train_command.sh`.
-Add `--execute` only once the local training environment already has the required trainer stack installed.
+### Public counterfactual launcher
 
-## Current Limitation
+```bash
+make public-webvoyager-counterfactual-manifest
+make launch-public-webvoyager-counterfactual-run
+```
 
-The sample run manifest is intentionally degenerate because the toy dataset contains only one task id, so all records fall into the same split bucket. This is acceptable for pipeline validation only; real runs must use multi-task data.
+### Direct one-shot launch
 
-## Current Non-Toy Bootstrap
+```bash
+python3 training/scripts/launch_manifest.py training/generated/webvoyager_public_counterfactual_run_manifest.json
+```
 
-The repository now also emits a dry-run manifest for the imported public WebVoyager example slice:
+This writes a runnable `train_command.sh` into the corresponding run directory. Add `--execute` only once the local training environment already has the required trainer stack installed.
 
-- manifest: `generated/webvoyager_public_example_run_manifest.json`
-- run dir: `generated/webvoyager_public_example_controller/`
+## Current limitation
 
-These artifacts are still based on bootstrap silver labels from successful public traces, so they are suitable for pipeline shakeout and initial training smoke tests, not for the final paper results.
+The repo has dry-run manifests and launch directories, but not a completed full fine-tuning result yet. The next milestone is to execute the counterfactual-controller run end to end and write the resulting metrics back into the paper.

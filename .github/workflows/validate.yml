@@ -26,3 +26,4 @@ jobs:
           make benchmark-samples
           make build-sample-manifest
           make bootstrap-sample-run
+          make validate-committed-artifacts

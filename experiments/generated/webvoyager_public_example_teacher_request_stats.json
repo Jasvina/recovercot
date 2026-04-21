@@ -1,9 +1,9 @@
 {
   "kind": "teacher_request",
   "count": 41,
-  "avg_prompt_chars": 6006.5854,
-  "max_prompt_chars": 12141,
-  "avg_prompt_lines": 94.5122,
-  "avg_approx_prompt_tokens": 1501.6341,
-  "total_approx_prompt_tokens": 61567
+  "avg_prompt_chars": 6107.5854,
+  "max_prompt_chars": 12242,
+  "avg_prompt_lines": 98.5122,
+  "avg_approx_prompt_tokens": 1526.8537,
+  "total_approx_prompt_tokens": 62601
 }

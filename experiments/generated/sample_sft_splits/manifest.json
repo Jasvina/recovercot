@@ -1,7 +1,0 @@
-{
-  "train": 0,
-  "dev": 0,
-  "test": 5,
-  "group_key": "task_id",
-  "warning": "empty splits: train, dev; this is expected on tiny toy data but should be avoided for real runs"
-}

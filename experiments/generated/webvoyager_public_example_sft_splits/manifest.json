@@ -1,6 +1,0 @@
-{
-  "train": 23,
-  "dev": 5,
-  "test": 13,
-  "group_key": "task_id"
-}
