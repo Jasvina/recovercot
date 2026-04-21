@@ -1,0 +1,17 @@
+{
+  "run_name": "webvoyager_public_example_controller",
+  "task": "recoverability_controller_sft",
+  "data": {
+    "train_file": "experiments/generated/webvoyager_public_example_sft_splits/train.jsonl",
+    "dev_file": "experiments/generated/webvoyager_public_example_sft_splits/dev.jsonl",
+    "test_file": "experiments/generated/webvoyager_public_example_sft_splits/test.jsonl"
+  },
+  "config": "training/configs/controller_lora_template.json",
+  "output_dir": "outputs/webvoyager_public_example_controller",
+  "expected_eval_metrics": "experiments/generated/webvoyager_public_example_recoverability_stats.json",
+  "artifacts": {
+    "best_checkpoint": "outputs/webvoyager_public_example_controller/best_checkpoint",
+    "predictions": "outputs/webvoyager_public_example_controller/predictions.jsonl",
+    "evaluation": "outputs/webvoyager_public_example_controller/evaluation.json"
+  }
+}

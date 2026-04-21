@@ -66,6 +66,21 @@ def summarize_labels(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def summarize_teacher_requests(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    prompt_chars = [len(row.get("prompt", "")) for row in rows]
+    prompt_lines = [row.get("prompt", "").count("\n") + 1 for row in rows]
+    approx_tokens = [max(1, round(chars / 4)) for chars in prompt_chars]
+    return {
+        "kind": "teacher_request",
+        "count": len(rows),
+        "avg_prompt_chars": round(sum(prompt_chars) / len(prompt_chars), 4) if prompt_chars else 0.0,
+        "max_prompt_chars": max(prompt_chars) if prompt_chars else 0,
+        "avg_prompt_lines": round(sum(prompt_lines) / len(prompt_lines), 4) if prompt_lines else 0.0,
+        "avg_approx_prompt_tokens": round(sum(approx_tokens) / len(approx_tokens), 4) if approx_tokens else 0.0,
+        "total_approx_prompt_tokens": sum(approx_tokens),
+    }
+
+
 def infer_kind(rows: list[dict[str, Any]]) -> str:
     if not rows:
         return "unknown"
@@ -74,6 +89,8 @@ def infer_kind(rows: list[dict[str, Any]]) -> str:
         return "trajectory"
     if "current_observation" in sample:
         return "sampled_state"
+    if "prompt" in sample and "state_id" in sample:
+        return "teacher_request"
     if "recoverability" in sample and "candidate_scores" in sample:
         return "label"
     return "unknown"
@@ -90,6 +107,8 @@ def main() -> int:
         summary = summarize_trajectories(rows)
     elif kind == "sampled_state":
         summary = summarize_states(rows)
+    elif kind == "teacher_request":
+        summary = summarize_teacher_requests(rows)
     elif kind == "label":
         summary = summarize_labels(rows)
     else:

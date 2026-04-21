@@ -31,7 +31,7 @@ def main() -> int:
     }
     (run_dir / "run_metadata.json").write_text(json.dumps(metadata, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
 
-    readme = f"""# Run Directory\n\nRun name: `{manifest.get('run_name')}`\n\nThis directory was bootstrapped from `{manifest_path}`.\nExpected artifacts:\n\n- best checkpoint: `{manifest.get('artifacts', {}).get('best_checkpoint')}`\n- predictions: `{manifest.get('artifacts', {}).get('predictions')}`\n- evaluation: `{manifest.get('artifacts', {}).get('evaluation')}`\n"""
+    readme = f"""# Run Directory\n\nRun name: `{manifest.get('run_name')}`\n\nThis directory was bootstrapped from `{manifest_path}`.\nExpected artifacts:\n\n- train command: `{run_dir / 'train_command.sh'}`\n- best checkpoint: `{manifest.get('artifacts', {}).get('best_checkpoint')}`\n- predictions: `{manifest.get('artifacts', {}).get('predictions')}`\n- evaluation: `{manifest.get('artifacts', {}).get('evaluation')}`\n"""
     (run_dir / "README.md").write_text(readme, encoding="utf-8")
     print(run_dir)
     return 0

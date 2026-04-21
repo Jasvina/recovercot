@@ -1,0 +1,11 @@
+{
+  "kind": "label",
+  "count": 41,
+  "recoverability_breakdown": {
+    "recoverable": 11,
+    "weakly_recoverable": 30
+  },
+  "decision_breakdown": {
+    "continue": 41
+  }
+}

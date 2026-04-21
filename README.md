@@ -47,8 +47,12 @@ make build-sample-sft
 make benchmark-samples
 make build-sample-manifest
 make bootstrap-sample-run
+python3 training/scripts/launch_manifest.py training/sample_run_manifest.json
 make fetch-public-refs
 make public-webvoyager-examples
+make public-webvoyager-bootstrap-labels
+make public-webvoyager-bootstrap-manifest
+make launch-public-webvoyager-bootstrap-run
 make paper
 ```
 

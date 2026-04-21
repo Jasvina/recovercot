@@ -149,6 +149,7 @@ The offline setting isolates recovery decisions from environment instability, wh
 
 \subsection{Training Data Construction}
 Training examples are built from mixed successful and failed trajectories. We use state sampling heuristics from Section 4 to enrich hard states, then create train/dev/test splits at the task level to avoid state leakage from the same trajectory. When benchmark websites overlap heavily, we additionally recommend site-level or template-level separation to prevent the controller from simply memorizing domain-specific checkpoints.
+As a concrete bootstrap corpus, our current repository import parses the 15 public WebVoyager example traces released with the official project \citep{he-etal-2024-webvoyager}. This yields 41 sampled intermediate states and a task-grouped split of 23/5/13 train/dev/test states. We treat this slice as a sanity-check dataset for validating the preprocessing, prompting, label-schema plumbing, and manifest-generation pipeline, not as the final experimental benchmark, because it is small and dominated by successful demonstrations. In the current prototype, these states can be paired with bootstrap silver labels derived from success-trace continuation, which is useful for end-to-end smoke tests but insufficient for the final paper's main results.
 
 \subsection{Baselines}
 We compare against four baseline families:
@@ -273,5 +274,4 @@ Full RecoverCoT & -- & -- & -- & -- \\
 \end{table*}
 
 \bibliography{references}
-\bibliographystyle{acl_natbib}
 \end{document}

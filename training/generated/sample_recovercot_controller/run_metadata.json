@@ -1,6 +1,6 @@
 {
-  "created_at_utc": "2026-04-21T01:32:19.475430+00:00",
-  "manifest_source": "training/sample_run_manifest.json",
+  "created_at_utc": "2026-04-21T03:12:12.891362+00:00",
+  "manifest_source": "/Users/weiyi/WyCode/recovercot-paper/training/sample_run_manifest.json",
   "run_name": "sample_recovercot_controller",
   "task": "recoverability_controller_sft"
 }
