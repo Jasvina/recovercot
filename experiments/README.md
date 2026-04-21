@@ -22,6 +22,9 @@ This directory holds the first concrete artifacts for RecoverCoT-style recoverab
 - `generated/sample_sft_records.jsonl` - SFT-style training records built from sampled states and labels.
 - `generated/webvoyager_like_normalized.jsonl` - normalized benchmark-style WebVoyager sample.
 - `generated/mind2web_like_normalized.jsonl` - normalized benchmark-style Mind2Web sample.
+- `generated/webvoyager_public_examples_normalized.jsonl` - normalized trajectories imported from the public WebVoyager example result folders.
+- `generated/webvoyager_public_examples_states.jsonl` - sampled recoverability states from those imported public examples.
+- `generated/webvoyager_public_example_state_splits/` - deterministic train/dev/test splits over public-example sampled states.
 - `generated/*_stats.json` - summary stats for trajectories or sampled states.
 - `scripts/validate_recoverability_jsonl.py` - stdlib-only validator for JSONL label files.
 - `scripts/validate_sampled_states_jsonl.py` - stdlib-only validator for sampled-state JSONL files.
@@ -85,6 +88,19 @@ python3 experiments/scripts/validate_trajectories_jsonl.py \
 python3 experiments/scripts/dataset_stats.py \
   experiments/generated/webvoyager_like_normalized.jsonl \
   --output experiments/generated/webvoyager_like_stats.json
+
+python3 experiments/scripts/adapt_benchmark_trajectories.py \
+  /Users/weiyi/_external/recovercot_refs/WebVoyager/results/examples \
+  --format webvoyager_results_root \
+  --output experiments/generated/webvoyager_public_examples_normalized.jsonl
+
+python3 experiments/scripts/sample_recoverability_states.py \
+  experiments/generated/webvoyager_public_examples_normalized.jsonl \
+  --output experiments/generated/webvoyager_public_examples_states.jsonl
+
+python3 experiments/scripts/split_recoverability_dataset.py \
+  experiments/generated/webvoyager_public_examples_states.jsonl \
+  --out-dir experiments/generated/webvoyager_public_example_state_splits
 ```
 
 The last command reports offline proxy metrics such as recoverability accuracy, decision accuracy, rollback-target accuracy, rollback-decision precision, and unnecessary rollback rate.

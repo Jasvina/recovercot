@@ -1,0 +1,49 @@
+{
+  "kind": "trajectory",
+  "count": 15,
+  "avg_steps": 6.0,
+  "max_steps": 12,
+  "success_breakdown": {
+    "success": 15
+  },
+  "site_breakdown": {
+    "https://www.allrecipes.com/": 1,
+    "https://www.amazon.com/": 1,
+    "https://www.apple.com/": 1,
+    "https://arxiv.org/": 1,
+    "https://www.bbc.com/news/": 1,
+    "https://www.booking.com/": 1,
+    "https://dictionary.cambridge.org/": 1,
+    "https://www.coursera.org/": 1,
+    "https://www.espn.com/": 1,
+    "https://github.com/": 1,
+    "https://www.google.com/travel/flights/": 1,
+    "https://www.google.com/maps/": 1,
+    "https://www.google.com/": 1,
+    "https://huggingface.co/": 1,
+    "https://www.wolframalpha.com/": 1
+  },
+  "total_checkpoints": 81,
+  "top_tags": [
+    [
+      "webvoyager_trace",
+      90
+    ],
+    [
+      "page_transition",
+      66
+    ],
+    [
+      "answer_step",
+      15
+    ],
+    [
+      "search_submit",
+      14
+    ],
+    [
+      "scroll",
+      9
+    ]
+  ]
+}

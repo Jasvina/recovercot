@@ -1,0 +1,28 @@
+{
+  "kind": "sampled_state",
+  "count": 41,
+  "avg_remaining_budget": 1.5122,
+  "avg_checkpoint_candidates": 2.4146,
+  "top_trigger_tags": [
+    [
+      "webvoyager_trace",
+      41
+    ],
+    [
+      "page_transition",
+      22
+    ],
+    [
+      "answer_step",
+      15
+    ],
+    [
+      "search_submit",
+      14
+    ],
+    [
+      "scroll",
+      4
+    ]
+  ]
+}

@@ -13,6 +13,7 @@ The repository is intentionally small: paper source, bibliography, and minimal b
 - `paper/references.bib` — bibliography for the current related work.
 - `experiments/` — prompt/schema/example/validator scaffold for recoverability labels.
 - `training/` — config and run-manifest scaffold for controller fine-tuning.
+- `scripts/` — utility scripts such as public benchmark reference fetching.
 - `paper/README.md` — local build notes.
 
 ## Repository Status
@@ -46,5 +47,9 @@ make build-sample-sft
 make benchmark-samples
 make build-sample-manifest
 make bootstrap-sample-run
+make fetch-public-refs
+make public-webvoyager-examples
 make paper
 ```
+
+`make public-webvoyager-examples` expects the public reference repositories to exist under `/Users/weiyi/_external/recovercot_refs`, which `make fetch-public-refs` prepares.

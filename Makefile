@@ -1,4 +1,4 @@
-.PHONY: paper clean validate-sample sample-pipeline build-sample-records eval-sample build-sample-sft benchmark-samples build-sample-manifest bootstrap-sample-run
+.PHONY: paper clean validate-sample sample-pipeline build-sample-records eval-sample build-sample-sft benchmark-samples build-sample-manifest bootstrap-sample-run fetch-public-refs public-webvoyager-examples
 
 paper:
 	cd paper && latexmk -pdf main.tex
@@ -46,3 +46,15 @@ bootstrap-sample-run:
 	python3 training/scripts/bootstrap_run_dir.py training/sample_run_manifest.json --run-dir training/generated/sample_recovercot_controller
 	python3 training/scripts/render_hf_sft_command.py training/sample_run_manifest.json --output training/generated/sample_train_command.sh
 	chmod +x training/generated/sample_train_command.sh
+
+fetch-public-refs:
+	bash scripts/fetch_public_refs.sh
+
+public-webvoyager-examples:
+	python3 experiments/scripts/adapt_benchmark_trajectories.py /Users/weiyi/_external/recovercot_refs/WebVoyager/results/examples --format webvoyager_results_root --output experiments/generated/webvoyager_public_examples_normalized.jsonl
+	python3 experiments/scripts/validate_trajectories_jsonl.py experiments/generated/webvoyager_public_examples_normalized.jsonl
+	python3 experiments/scripts/dataset_stats.py experiments/generated/webvoyager_public_examples_normalized.jsonl --output experiments/generated/webvoyager_public_examples_stats.json
+	python3 experiments/scripts/sample_recoverability_states.py experiments/generated/webvoyager_public_examples_normalized.jsonl --output experiments/generated/webvoyager_public_examples_states.jsonl
+	python3 experiments/scripts/validate_sampled_states_jsonl.py experiments/generated/webvoyager_public_examples_states.jsonl
+	python3 experiments/scripts/dataset_stats.py experiments/generated/webvoyager_public_examples_states.jsonl --output experiments/generated/webvoyager_public_examples_state_stats.json
+	python3 experiments/scripts/split_recoverability_dataset.py experiments/generated/webvoyager_public_examples_states.jsonl --out-dir experiments/generated/webvoyager_public_example_state_splits
