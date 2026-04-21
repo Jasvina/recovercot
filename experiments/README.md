@@ -14,17 +14,26 @@ This directory holds the first concrete artifacts for RecoverCoT-style recoverab
 - `examples/sample_gold_labels.jsonl` - toy gold labels for offline metric testing.
 - `examples/sample_pred_labels.jsonl` - toy predictions for offline metric testing.
 - `examples/sample_teacher_outputs.jsonl` - toy teacher responses for sampled states.
+- `examples/raw/webvoyager_like.json` - benchmark-style raw trajectory example.
+- `examples/raw/mind2web_like.json` - benchmark-style raw trajectory example.
 - `generated/sample_sampled_states.jsonl` - sampled states generated from the sample trajectory.
 - `generated/sample_recoverability_records.jsonl` - validated recoverability records built from teacher outputs.
 - `generated/sample_teacher_requests.jsonl` - rendered teacher prompts for sampled states.
 - `generated/sample_sft_records.jsonl` - SFT-style training records built from sampled states and labels.
+- `generated/webvoyager_like_normalized.jsonl` - normalized benchmark-style WebVoyager sample.
+- `generated/mind2web_like_normalized.jsonl` - normalized benchmark-style Mind2Web sample.
+- `generated/*_stats.json` - summary stats for trajectories or sampled states.
 - `scripts/validate_recoverability_jsonl.py` - stdlib-only validator for JSONL label files.
 - `scripts/validate_sampled_states_jsonl.py` - stdlib-only validator for sampled-state JSONL files.
+- `scripts/validate_trajectories_jsonl.py` - stdlib-only validator for normalized trajectory JSONL files.
+- `scripts/adapt_benchmark_trajectories.py` - raw benchmark-like trace adapters into RecoverCoT trajectory format.
 - `scripts/sample_recoverability_states.py` - heuristic sampler from trajectory data to sampled states.
 - `scripts/render_teacher_requests.py` - prompt renderer from sampled states to teacher requests.
 - `scripts/evaluate_recoverability_predictions.py` - offline metric calculator for gold vs predicted labels.
 - `scripts/build_sft_training_data.py` - converter from sampled states plus labels into SFT-style JSONL.
 - `scripts/build_recoverability_records.py` - merges sampled states with teacher outputs into validated recoverability records.
+- `scripts/dataset_stats.py` - summary statistics for trajectories, sampled states, or labels.
+- `scripts/split_recoverability_dataset.py` - deterministic train/dev/test split utility.
 
 ## Expected Workflow
 
@@ -64,6 +73,18 @@ python3 experiments/scripts/build_sft_training_data.py \
   experiments/generated/sample_sampled_states.jsonl \
   experiments/generated/sample_recoverability_records.jsonl \
   --output experiments/generated/sample_sft_records.jsonl
+
+python3 experiments/scripts/adapt_benchmark_trajectories.py \
+  experiments/examples/raw/webvoyager_like.json \
+  --format webvoyager_like \
+  --output experiments/generated/webvoyager_like_normalized.jsonl
+
+python3 experiments/scripts/validate_trajectories_jsonl.py \
+  experiments/generated/webvoyager_like_normalized.jsonl
+
+python3 experiments/scripts/dataset_stats.py \
+  experiments/generated/webvoyager_like_normalized.jsonl \
+  --output experiments/generated/webvoyager_like_stats.json
 ```
 
 The last command reports offline proxy metrics such as recoverability accuracy, decision accuracy, rollback-target accuracy, rollback-decision precision, and unnecessary rollback rate.

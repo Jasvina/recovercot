@@ -1,0 +1,38 @@
+{
+  "benchmark": "webvoyager_like",
+  "task_id": "wv_demo_001",
+  "instruction": "Find a blue waterproof hiking jacket under $120 and add it to the cart.",
+  "site": "demo-outdoor-store",
+  "status": "failed",
+  "max_steps": 15,
+  "trajectory": [
+    {
+      "step_id": 1,
+      "url": "https://demo.example.com/",
+      "action": {"type": "goto", "name": "open_homepage", "target": "homepage", "value": null},
+      "observation": {"text": "Homepage with top navigation including Men, Women, Outerwear, and Search."},
+      "meta": {"tags": ["start", "page_transition"], "checkpoint": true}
+    },
+    {
+      "step_id": 2,
+      "url": "https://demo.example.com/men",
+      "action": {"type": "click", "name": "click_nav", "target": "Men", "value": null},
+      "observation": {"text": "Men category page with lifestyle apparel and outdoor gear."},
+      "meta": {"tags": ["page_transition"], "checkpoint": true}
+    },
+    {
+      "step_id": 3,
+      "url": "https://demo.example.com/men/jackets",
+      "action": {"type": "click", "name": "click_category", "target": "Casual Jackets", "value": null},
+      "observation": {"text": "Casual jacket grid appears. No hiking-specific filters are visible."},
+      "meta": {"tags": ["wrong_branch", "page_transition"], "checkpoint": true}
+    },
+    {
+      "step_id": 4,
+      "url": "https://demo.example.com/men/jackets",
+      "action": {"type": "type", "name": "set_filter", "target": "color_filter", "value": "blue"},
+      "observation": {"text": "Blue casual jackets are shown, but the branch is still casual jackets."},
+      "meta": {"tags": ["branch_refinement"], "checkpoint": false}
+    }
+  ]
+}

@@ -32,6 +32,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("gold_jsonl")
     parser.add_argument("pred_jsonl")
+    parser.add_argument("--output")
     args = parser.parse_args()
 
     gold = load_jsonl(Path(args.gold_jsonl))
@@ -79,7 +80,10 @@ def main() -> int:
         "rollback_decision_precision": round(safe_div(correct_rollback_decisions, predicted_rollbacks), 4),
         "unnecessary_rollback_rate": round(safe_div(unnecessary_rollbacks, predicted_rollbacks), 4),
     }
-    print(json.dumps(metrics, indent=2, ensure_ascii=True))
+    text = json.dumps(metrics, indent=2, ensure_ascii=True) + "\n"
+    if args.output:
+        Path(args.output).write_text(text, encoding="utf-8")
+    print(text, end="")
     return 0
 
 

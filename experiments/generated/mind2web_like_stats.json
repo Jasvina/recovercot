@@ -1,0 +1,27 @@
+{
+  "kind": "trajectory",
+  "count": 1,
+  "avg_steps": 3.0,
+  "max_steps": 3,
+  "success_breakdown": {
+    "success": 1
+  },
+  "site_breakdown": {
+    "demo-outdoor-store": 1
+  },
+  "total_checkpoints": 3,
+  "top_tags": [
+    [
+      "page_transition",
+      3
+    ],
+    [
+      "search_submit",
+      1
+    ],
+    [
+      "good_branch",
+      1
+    ]
+  ]
+}

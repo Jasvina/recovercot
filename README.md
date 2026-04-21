@@ -12,6 +12,7 @@ The repository is intentionally small: paper source, bibliography, and minimal b
 - `paper/main.tex` — ACL/EMNLP-style draft.
 - `paper/references.bib` — bibliography for the current related work.
 - `experiments/` — prompt/schema/example/validator scaffold for recoverability labels.
+- `training/` — config and run-manifest scaffold for controller fine-tuning.
 - `paper/README.md` — local build notes.
 
 ## Repository Status
@@ -42,5 +43,7 @@ make sample-pipeline
 make build-sample-records
 make eval-sample
 make build-sample-sft
+make benchmark-samples
+make build-sample-manifest
 make paper
 ```

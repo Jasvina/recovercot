@@ -1,0 +1,33 @@
+{
+  "benchmark": "mind2web_like",
+  "annotation_id": "m2w_demo_001",
+  "confirmed_task": "Search for a blue waterproof hiking jacket under $120 and open the correct product page.",
+  "website": "demo-outdoor-store",
+  "is_success": true,
+  "actions": [
+    {
+      "operation": {"op": "CLICK", "value": "Outerwear"},
+      "pos_candidates": [{"rank": 0, "backend_node_id": "node_12", "text": "Outerwear"}],
+      "url": "https://demo.example.com/outerwear",
+      "observation": "Outerwear category page with hiking and rain jackets.",
+      "tags": ["page_transition"],
+      "checkpoint": true
+    },
+    {
+      "operation": {"op": "TYPE", "value": "blue waterproof hiking jacket"},
+      "pos_candidates": [{"rank": 0, "backend_node_id": "node_98", "text": "search_box"}],
+      "url": "https://demo.example.com/search?q=blue+waterproof+hiking+jacket",
+      "observation": "Search results include waterproof hiking jackets and shells.",
+      "tags": ["search_submit", "page_transition"],
+      "checkpoint": true
+    },
+    {
+      "operation": {"op": "CLICK", "value": "TrailGuard Lite"},
+      "pos_candidates": [{"rank": 0, "backend_node_id": "node_211", "text": "TrailGuard Lite"}],
+      "url": "https://demo.example.com/product/trailguard-lite",
+      "observation": "Correct product page, price $109, waterproof and hiking-specific.",
+      "tags": ["good_branch", "page_transition"],
+      "checkpoint": true
+    }
+  ]
+}

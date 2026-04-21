@@ -1,0 +1,20 @@
+{
+  "kind": "sampled_state",
+  "count": 2,
+  "avg_remaining_budget": 0.5,
+  "avg_checkpoint_candidates": 1.5,
+  "top_trigger_tags": [
+    [
+      "page_transition",
+      2
+    ],
+    [
+      "search_submit",
+      1
+    ],
+    [
+      "good_branch",
+      1
+    ]
+  ]
+}

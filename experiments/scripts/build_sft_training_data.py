@@ -72,6 +72,7 @@ def main() -> int:
         rows.append(
             {
                 "id": state_id,
+                "task_id": state["task_id"],
                 "messages": [
                     {"role": "user", "content": state_prompt(state)},
                     {"role": "assistant", "content": json.dumps(answer, ensure_ascii=True)},
