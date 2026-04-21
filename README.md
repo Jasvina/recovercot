@@ -8,7 +8,7 @@ The repository is intentionally small: paper source, bibliography, and minimal b
 
 ## Layout
 
-- `STATUS.md` — the primary progress surface to monitor current stage and next actions.
+- `PROGRESS.md` — the canonical root-level progress log with timestamps, current status, and next steps.
 - `paper/main.tex` — ACL/EMNLP-style draft.
 - `paper/references.bib` — bibliography for the current related work.
 - `experiments/` — prompt/schema/example/validator scaffold for recoverability labels.
@@ -45,5 +45,6 @@ make eval-sample
 make build-sample-sft
 make benchmark-samples
 make build-sample-manifest
+make bootstrap-sample-run
 make paper
 ```

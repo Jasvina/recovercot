@@ -1,4 +1,4 @@
-.PHONY: paper clean validate-sample sample-pipeline build-sample-records eval-sample build-sample-sft benchmark-samples build-sample-manifest
+.PHONY: paper clean validate-sample sample-pipeline build-sample-records eval-sample build-sample-sft benchmark-samples build-sample-manifest bootstrap-sample-run
 
 paper:
 	cd paper && latexmk -pdf main.tex
@@ -41,3 +41,8 @@ benchmark-samples:
 build-sample-manifest:
 	python3 experiments/scripts/split_recoverability_dataset.py experiments/generated/sample_sft_records.jsonl --out-dir experiments/generated/sample_sft_splits
 	python3 training/scripts/prepare_training_manifest.py --train-file experiments/generated/sample_sft_splits/train.jsonl --dev-file experiments/generated/sample_sft_splits/dev.jsonl --test-file experiments/generated/sample_sft_splits/test.jsonl --config training/configs/controller_lora_template.json --run-name sample_recovercot_controller --output-dir outputs/sample_recovercot_controller --metrics-file experiments/generated/sample_eval_metrics.json --output training/sample_run_manifest.json
+
+bootstrap-sample-run:
+	python3 training/scripts/bootstrap_run_dir.py training/sample_run_manifest.json --run-dir training/generated/sample_recovercot_controller
+	python3 training/scripts/render_hf_sft_command.py training/sample_run_manifest.json --output training/generated/sample_train_command.sh
+	chmod +x training/generated/sample_train_command.sh

@@ -23,3 +23,6 @@ jobs:
           make build-sample-records
           make eval-sample
           make build-sample-sft
+          make benchmark-samples
+          make build-sample-manifest
+          make bootstrap-sample-run
