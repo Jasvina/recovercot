@@ -1,8 +1,8 @@
-# RecoverCoT
+# Web Agent Recoverability
 
-![validate](https://github.com/Jasvina/recovercot/actions/workflows/validate.yml/badge.svg)
+![validate](https://github.com/Jasvina/web-agent-recoverability/actions/workflows/validate.yml/badge.svg)
 
-RecoverCoT is an EMNLP-style paper and experiment repository for:
+Web Agent Recoverability is an EMNLP-style paper and experiment repository for:
 
 > RecoverCoT: Counterfactual Recoverability Distillation for Robust Web Agents
 
@@ -10,7 +10,7 @@ The central idea is simple: before a web agent takes its next action, it should 
 
 ## Why this repository exists
 
-Most web-agent work improves next-action prediction, reward modeling, reflection, or rollback mechanics. RecoverCoT targets a different control problem: explicit state-level recoverability. This repository packages three pieces together so the paper and experiments stay synchronized:
+Most web-agent work improves next-action prediction, reward modeling, reflection, or rollback mechanics. The RecoverCoT method targets a different control problem: explicit state-level recoverability. This repository packages three pieces together so the paper and experiments stay synchronized:
 
 - an ACL/EMNLP paper draft in `paper/`
 - a recoverability-data pipeline in `experiments/`
@@ -26,6 +26,11 @@ The current repository can already run an end-to-end offline recoverability work
 4. build recoverability records and SFT data
 5. split train/dev/test sets deterministically by task
 6. render controller-training manifests and runnable trainer commands
+
+It also now includes two early-stage benchmark-ingestion extensions beyond the original WebVoyager path:
+
+- WebArena render-log ingestion for archived `render_*.html` trajectory bundles
+- WebArena-Verified task-log summarization from `agent_response.json` plus `network.har`
 
 ## Current experiment snapshot
 
@@ -73,6 +78,20 @@ make public-webvoyager-counterfactual-states
 make public-webvoyager-counterfactual-labels
 make public-webvoyager-counterfactual-manifest
 make launch-public-webvoyager-counterfactual-run
+```
+
+### 4. Summarize WebArena-Verified demo task logs
+
+```bash
+python3 experiments/scripts/summarize_webarena_verified_logs.py \
+  $HOME/code/_external/webarena-verified/examples/agent_logs/demo \
+  --output experiments/generated/webarena_verified_demo_log_summary.jsonl
+```
+
+If you want the public reference clones somewhere else, override `REF_ROOT`, for example:
+
+```bash
+make fetch-public-refs REF_ROOT=$HOME/code/_external/web-agent-recoverability_refs
 ```
 
 ## Repository map

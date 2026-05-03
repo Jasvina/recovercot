@@ -1,6 +1,6 @@
 # Progress
 
-Repository: `git@github.com:Jasvina/recovercot.git`
+Repository: `git@github.com:Jasvina/web-agent-recoverability.git`
 Canonical progress file: this document is the single root-level progress tracker.
 Update rule: every meaningful repo update should add a timestamped entry here, plus refresh the current-progress and next-step sections.
 Companion planning file: see `ROADMAP.md` for the current snapshot plus future optimization directions.
@@ -22,9 +22,11 @@ As of `2026-04-21 11:47:31 +0800`, the project has completed:
 11. cleaned the repository by removing committed toy/generated smoke-test outputs and ignored reproducible artifacts, while keeping the more informative public WebVoyager artifacts;
 12. refreshed the GitHub homepage `README.md` into a clearer project landing page with current dataset stats, quick-start commands, roadmap, and limitations;
 13. added a large counterfactual expansion pipeline over the public WebVoyager states: `167` total states (`41` observed + `126` synthetic), `265k` approximate teacher-prompt tokens, and a `93/21/53` train/dev/test split with continue/branch/rollback/restart labels;
-14. recorded the current repository snapshot, validation status, and future optimization directions in the new root-level `ROADMAP.md` document.
+14. recorded the current repository snapshot, validation status, and future optimization directions in the new root-level `ROADMAP.md` document;
+15. added an initial WebArena render-log adapter for archived `render_*.html` bundles, with regression tests for archive ingestion and section-mismatch failures;
+16. added an initial WebArena-Verified task-log summarizer that compacts `agent_response.json` and `network.har` into per-task JSONL summaries.
 
-What is still missing is broader benchmark ingestion, stronger teacher labeling beyond bootstrap heuristics, actual fine-tuning runs, and real result tables in the paper.
+What is still missing is broader benchmark ingestion, stronger teacher labeling beyond bootstrap heuristics, richer multi-state extraction for newer benchmark logs, actual fine-tuning runs, and real result tables in the paper.
 
 ## Next Step Plan
 
@@ -50,3 +52,5 @@ Immediate next steps, in order:
 - `2026-04-21 11:16:34 +0800` - The paper text and training docs were synced with the bootstrap public-example pipeline, and the draft was recompiled successfully after the protocol update (`3f976bc`).
 - `2026-04-21 11:41:14 +0800` - Repository cleanup removed committed toy smoke-test artifacts, the GitHub homepage README was rewritten, and a large public-WebVoyager counterfactual experiment pipeline was added with 167 states, diverse recovery decisions, SFT splits, and a dry-run training manifest (pending current commit).
 - `2026-04-21 11:47:31 +0800` - A new root-level `ROADMAP.md` was added to record the current repo snapshot, completed validation, and future optimization directions so both status tracking and forward planning live directly on GitHub (pending current commit).
+- `2026-05-03 23:10:00 +0800` - The repository rename was synced into repo-facing docs and scripts, a portable `REF_ROOT` override was added for public reference clones, WebArena render-archive ingestion was added with regression tests, and WebArena-Verified demo task logs can now be summarized from `agent_response.json` plus `network.har` (pending current commit).
+- `2026-05-03 23:15:56 +0800` - WebArena-Verified demo task logs can now be converted into schema-valid sampled states and bootstrap recoverability records, with `make` entrypoints and regression tests covering the new adapters (pending current commit).

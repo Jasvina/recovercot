@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REF_ROOT="${1:-/Users/weiyi/_external/recovercot_refs}"
+REF_ROOT="${1:-$HOME/_external/web-agent-recoverability_refs}"
 mkdir -p "$REF_ROOT"
 
 clone_or_update() {

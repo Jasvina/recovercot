@@ -1,6 +1,6 @@
 # Training
 
-This directory holds RecoverCoT controller-training scaffolding: config templates, manifest builders, run-directory bootstrapping, and launcher glue.
+This directory holds Web Agent Recoverability controller-training scaffolding: config templates, manifest builders, run-directory bootstrapping, and launcher glue.
 
 ## What this layer does
 

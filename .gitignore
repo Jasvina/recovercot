@@ -25,6 +25,7 @@ __pycache__/
 # Reproducible sample / smoke-test artifacts
 experiments/generated/sample_*
 experiments/generated/*_like_*
+experiments/generated/webarena_verified_demo_*
 experiments/generated/webvoyager_public_example_bootstrap_teacher_outputs.jsonl
 experiments/generated/webvoyager_public_example_recoverability_records.jsonl
 experiments/generated/webvoyager_public_example_recoverability_stats.json

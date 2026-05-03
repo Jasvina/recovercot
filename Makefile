@@ -1,4 +1,6 @@
-.PHONY: paper clean validate-sample validate-committed-artifacts sample-pipeline build-sample-records eval-sample build-sample-sft benchmark-samples build-sample-manifest bootstrap-sample-run launch-sample-run fetch-public-refs public-webvoyager-examples public-webvoyager-bootstrap-labels public-webvoyager-bootstrap-manifest launch-public-webvoyager-bootstrap-run public-webvoyager-counterfactual-states public-webvoyager-counterfactual-labels public-webvoyager-counterfactual-manifest launch-public-webvoyager-counterfactual-run
+.PHONY: paper clean validate-sample validate-committed-artifacts sample-pipeline build-sample-records eval-sample build-sample-sft benchmark-samples build-sample-manifest bootstrap-sample-run launch-sample-run fetch-public-refs public-webvoyager-examples public-webvoyager-bootstrap-labels public-webvoyager-bootstrap-manifest launch-public-webvoyager-bootstrap-run public-webvoyager-counterfactual-states public-webvoyager-counterfactual-labels public-webvoyager-counterfactual-manifest launch-public-webvoyager-counterfactual-run webarena-verified-demo-summary webarena-verified-demo-states webarena-verified-demo-labels
+
+REF_ROOT ?= $(HOME)/_external/web-agent-recoverability_refs
 
 paper:
 	cd paper && tectonic main.tex
@@ -7,6 +9,7 @@ clean:
 	rm -f paper/main.pdf paper/main.aux paper/main.bbl paper/main.blg paper/main.log paper/main.out
 	rm -rf experiments/generated/sample_*
 	rm -f experiments/generated/*_like_*
+	rm -f experiments/generated/webarena_verified_demo_*
 	rm -f experiments/generated/webvoyager_public_example_bootstrap_teacher_outputs.jsonl
 	rm -f experiments/generated/webvoyager_public_example_recoverability_records.jsonl
 	rm -f experiments/generated/webvoyager_public_example_recoverability_stats.json
@@ -69,10 +72,10 @@ launch-sample-run:
 	python3 training/scripts/launch_manifest.py training/sample_run_manifest.json
 
 fetch-public-refs:
-	bash scripts/fetch_public_refs.sh
+	bash scripts/fetch_public_refs.sh "$(REF_ROOT)"
 
 public-webvoyager-examples:
-	python3 experiments/scripts/adapt_benchmark_trajectories.py /Users/weiyi/_external/recovercot_refs/WebVoyager/results/examples --format webvoyager_results_root --output experiments/generated/webvoyager_public_examples_normalized.jsonl
+	python3 experiments/scripts/adapt_benchmark_trajectories.py "$(REF_ROOT)/WebVoyager/results/examples" --format webvoyager_results_root --output experiments/generated/webvoyager_public_examples_normalized.jsonl
 	python3 experiments/scripts/validate_trajectories_jsonl.py experiments/generated/webvoyager_public_examples_normalized.jsonl
 	python3 experiments/scripts/dataset_stats.py experiments/generated/webvoyager_public_examples_normalized.jsonl --output experiments/generated/webvoyager_public_examples_stats.json
 	python3 experiments/scripts/sample_recoverability_states.py experiments/generated/webvoyager_public_examples_normalized.jsonl --output experiments/generated/webvoyager_public_examples_states.jsonl
@@ -116,3 +119,16 @@ public-webvoyager-counterfactual-manifest:
 
 launch-public-webvoyager-counterfactual-run:
 	python3 training/scripts/launch_manifest.py training/generated/webvoyager_public_counterfactual_run_manifest.json
+
+webarena-verified-demo-summary:
+	python3 experiments/scripts/summarize_webarena_verified_logs.py "$(REF_ROOT)/webarena-verified/examples/agent_logs/demo" --output experiments/generated/webarena_verified_demo_log_summary.jsonl
+
+webarena-verified-demo-states:
+	python3 experiments/scripts/build_webarena_verified_states.py "$(REF_ROOT)/webarena-verified/examples/agent_logs/demo" --task-json "$(REF_ROOT)/webarena-verified/assets/dataset/webarena-verified.json" --output experiments/generated/webarena_verified_demo_states.jsonl
+	python3 experiments/scripts/validate_sampled_states_jsonl.py experiments/generated/webarena_verified_demo_states.jsonl
+
+webarena-verified-demo-labels:
+	python3 experiments/scripts/render_teacher_requests.py experiments/generated/webarena_verified_demo_states.jsonl --output experiments/generated/webarena_verified_demo_teacher_requests.jsonl
+	python3 experiments/scripts/bootstrap_teacher_outputs.py experiments/generated/webarena_verified_demo_states.jsonl --output experiments/generated/webarena_verified_demo_bootstrap_labels.jsonl
+	python3 experiments/scripts/build_recoverability_records.py experiments/generated/webarena_verified_demo_states.jsonl experiments/generated/webarena_verified_demo_bootstrap_labels.jsonl --output experiments/generated/webarena_verified_demo_recoverability_records.jsonl
+	python3 experiments/scripts/validate_recoverability_jsonl.py experiments/generated/webarena_verified_demo_recoverability_records.jsonl

@@ -1,0 +1,9 @@
+[
+  {
+    "sites": ["shopping_admin"],
+    "task_id": 0,
+    "intent": "Find the top-selling product in 2022.",
+    "start_url": "__SHOPPING_ADMIN__",
+    "max_steps": 2
+  }
+]

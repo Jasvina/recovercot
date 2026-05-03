@@ -1,6 +1,6 @@
 # Roadmap and Optimization Notes
 
-This document records the current state of the RecoverCoT repository after the cleanup / README refresh / experiment expansion pass, plus concrete next optimization directions.
+This document records the current state of the Web Agent Recoverability repository after the cleanup / README refresh / experiment expansion pass, plus concrete next optimization directions.
 
 ## Current Snapshot
 
@@ -105,8 +105,9 @@ Goal: reduce reliance on synthetic perturbations and make the paper stronger.
 Planned work:
 
 - add WebArena / WebArena-Verified trajectory-log importers where task logs or trace packages are available;
+- promote the new WebArena-Verified task-log summary path (`agent_response.json` + `network.har`) into a full recoverability-state adapter;
 - add Mind2Web raw-data importer once full local dataset files are available;
-- support external agent logs with a generic JSONL adapter so other runs can be converted into RecoverCoT trajectories;
+- support external agent logs with a generic JSONL adapter so other runs can be converted into Web Agent Recoverability trajectories;
 - add dataset cards for each imported benchmark slice.
 
 ### 2. Upgrade Bootstrap Labels to Strong Teacher Labels
@@ -147,7 +148,7 @@ Planned work:
 
 ### 5. Strengthen Evaluation
 
-Goal: ensure EMNLP reviewers can see that RecoverCoT measures recovery behavior directly.
+Goal: ensure EMNLP reviewers can see that Web Agent Recoverability measures recovery behavior directly.
 
 Planned work:
 
